@@ -1,0 +1,2521 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clube de Leitura · A Ecológica de Duna</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== CSS VARIABLES ===== */
+    :root {
+      --sand-deep:    #0d0a05;
+      --sand-dark:    #1a1208;
+      --sand-mid:     #2e1f0a;
+      --spice-amber:  #c4742a;
+      --spice-gold:   #e8a84a;
+      --spice-pale:   #f5d898;
+      --dune-tan:     #c9a96e;
+      --dune-cream:   #f0e0b8;
+      --eco-green:    #4a8c3f;
+      --eco-bright:   #6fbf5a;
+      --eco-pale:     #a8e095;
+      --sky-blue:     #3a6b8a;
+      --sky-pale:     #7ab8d4;
+      --danger-red:   #a03020;
+      --white-sand:   #f7edd8;
+      --text-main:    #e8d5b0;
+      --text-dim:     #9a8560;
+      --border-glow:  rgba(196,116,42,0.35);
+      --glow-amber:   rgba(232,168,74,0.2);
+      --font-display: 'Cinzel', serif;
+      --font-body:    'Crimson Pro', serif;
+      --font-mono:    'Space Mono', monospace;
+    }
+
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--sand-deep);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    ::selection { background: var(--spice-amber); color: var(--sand-deep); }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--sand-dark); }
+    ::-webkit-scrollbar-thumb { background: var(--spice-amber); border-radius: 3px; }
+
+    /* ===== CANVAS PARTICLES ===== */
+    #particles-canvas {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none; z-index: 0;
+      opacity: 0.35;
+    }
+
+    /* ===== NAVIGATION ===== */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 1000;
+      background: rgba(13, 10, 5, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-glow);
+      padding: 0 1.5rem;
+    }
+
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 62px;
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: var(--spice-gold);
+      text-transform: uppercase;
+      text-decoration: none;
+      line-height: 1.2;
+    }
+
+    .nav-logo span { display: block; font-size: 0.6rem; color: var(--text-dim); letter-spacing: 0.2em; }
+
+    .nav-links {
+      display: flex;
+      gap: 0;
+      list-style: none;
+    }
+
+    .nav-links a {
+      display: block;
+      padding: 0.45rem 0.85rem;
+      font-family: var(--font-display);
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.2s, border-bottom-color 0.2s;
+      border-bottom: 2px solid transparent;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--spice-gold);
+      border-bottom-color: var(--spice-amber);
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 8px;
+      background: none;
+      border: none;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 24px; height: 2px;
+      background: var(--spice-gold);
+      transition: all 0.3s;
+    }
+
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 62px; left: 0; right: 0;
+      background: rgba(13,10,5,0.97);
+      border-bottom: 1px solid var(--border-glow);
+      z-index: 999;
+      padding: 1rem 0;
+    }
+
+    .mobile-menu.open { display: block; }
+
+    .mobile-menu a {
+      display: block;
+      padding: 0.85rem 2rem;
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(196,116,42,0.1);
+    }
+
+    .mobile-menu a:hover { color: var(--spice-gold); background: rgba(196,116,42,0.05); }
+
+    /* ===== SECTIONS ===== */
+    section {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      padding: 100px 1.5rem 80px;
+    }
+
+    .section-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    /* ===== SECTION HEADERS ===== */
+    .section-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--spice-amber);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .section-eyebrow::before {
+      content: '';
+      display: inline-block;
+      width: 30px; height: 1px;
+      background: var(--spice-amber);
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      color: var(--spice-pale);
+      line-height: 1.1;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-dim);
+      font-style: italic;
+      margin-bottom: 3rem;
+    }
+
+    /* ===== DIVIDER ===== */
+    .dune-divider {
+      width: 100%;
+      height: 40px;
+      margin: 2rem 0;
+      overflow: hidden;
+      opacity: 0.3;
+    }
+
+    .dune-divider svg { width: 100%; height: 100%; }
+
+    /* ===== CARD BASE ===== */
+    .card {
+      background: rgba(30,20,8,0.7);
+      border: 1px solid var(--border-glow);
+      border-radius: 8px;
+      padding: 1.75rem;
+      backdrop-filter: blur(6px);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .card:hover {
+      border-color: rgba(196,116,42,0.6);
+      box-shadow: 0 0 30px var(--glow-amber);
+    }
+
+    /* ===== BADGE ===== */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.3rem 0.8rem;
+      border-radius: 50px;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .badge-eco {
+      background: rgba(74,140,63,0.2);
+      border: 1px solid var(--eco-green);
+      color: var(--eco-bright);
+    }
+
+    .badge-spice {
+      background: rgba(196,116,42,0.15);
+      border: 1px solid var(--spice-amber);
+      color: var(--spice-gold);
+    }
+
+    /* ===== BUTTON ===== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.7rem 1.6rem;
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--spice-amber);
+      color: var(--sand-deep);
+      font-weight: 700;
+    }
+
+    .btn-primary:hover {
+      background: var(--spice-gold);
+      box-shadow: 0 0 20px rgba(232,168,74,0.4);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--spice-gold);
+      border: 1px solid var(--spice-amber);
+    }
+
+    .btn-outline:hover {
+      background: rgba(196,116,42,0.1);
+      box-shadow: 0 0 15px rgba(196,116,42,0.2);
+    }
+
+    .btn-eco {
+      background: var(--eco-green);
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .btn-eco:hover {
+      background: var(--eco-bright);
+      box-shadow: 0 0 20px rgba(74,140,63,0.4);
+      transform: translateY(-1px);
+    }
+
+    /* ===== ================== ===== */
+    /* ===== SECTION 1: HOME   ===== */
+    /* ===== ================== ===== */
+    #home {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: 80px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .hero-badges {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 900;
+      color: var(--white-sand);
+      line-height: 1.05;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-title .highlight {
+      color: var(--spice-gold);
+      position: relative;
+    }
+
+    .hero-title .highlight::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--spice-amber), transparent);
+    }
+
+    .hero-subtitle {
+      font-size: 1.1rem;
+      color: var(--dune-tan);
+      font-style: italic;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-description {
+      font-size: 1rem;
+      color: var(--text-main);
+      margin-bottom: 2rem;
+      line-height: 1.8;
+    }
+
+    .hero-cta { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+    /* Student card */
+    .student-card {
+      background: rgba(30,20,8,0.8);
+      border: 1px solid var(--border-glow);
+      border-radius: 12px;
+      padding: 2rem;
+      backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .student-card::before {
+      content: '';
+      position: absolute;
+      top: -50%; right: -30%;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(196,116,42,0.15), transparent 70%);
+      pointer-events: none;
+    }
+
+    .student-card-title {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      color: var(--spice-amber);
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+    }
+
+    .student-info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid rgba(196,116,42,0.12);
+    }
+
+    .student-info-row:last-child { border-bottom: none; }
+
+    .student-info-label {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-dim);
+    }
+
+    .student-info-value {
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      color: var(--dune-cream);
+      text-align: right;
+      max-width: 55%;
+    }
+
+    /* Progress Timeline */
+    .progress-section {
+      margin-top: 4rem;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .progress-title {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      color: var(--spice-pale);
+    }
+
+    .progress-status {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--eco-bright);
+    }
+
+    .weeks-track {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 6px;
+      margin-bottom: 1rem;
+    }
+
+    .week-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .week-dot {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 700;
+      transition: all 0.3s;
+      cursor: default;
+      position: relative;
+    }
+
+    .week-dot.past {
+      background: var(--spice-amber);
+      color: var(--sand-deep);
+      box-shadow: 0 0 12px rgba(196,116,42,0.5);
+    }
+
+    .week-dot.current {
+      background: var(--eco-green);
+      color: #fff;
+      box-shadow: 0 0 16px rgba(74,140,63,0.6);
+      animation: pulse-current 2s ease-in-out infinite;
+    }
+
+    .week-dot.future {
+      background: rgba(30,20,8,0.8);
+      color: var(--text-dim);
+      border: 1px solid var(--border-glow);
+    }
+
+    @keyframes pulse-current {
+      0%, 100% { box-shadow: 0 0 16px rgba(74,140,63,0.6); }
+      50% { box-shadow: 0 0 26px rgba(111,191,90,0.8); }
+    }
+
+    .week-label {
+      font-family: var(--font-mono);
+      font-size: 0.5rem;
+      color: var(--text-dim);
+      letter-spacing: 0.05em;
+      text-align: center;
+    }
+
+    .progress-bar-wrap {
+      height: 4px;
+      background: rgba(196,116,42,0.15);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--spice-amber), var(--eco-bright));
+      border-radius: 2px;
+      transition: width 1.5s ease;
+    }
+
+    /* Comments Wall */
+    .comments-section { margin-top: 4rem; }
+
+    .comments-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .comment-card {
+      background: rgba(22,15,5,0.7);
+      border: 1px solid rgba(196,116,42,0.2);
+      border-radius: 8px;
+      padding: 1.25rem;
+      position: relative;
+    }
+
+    .comment-card::before {
+      content: '"';
+      position: absolute;
+      top: 0.5rem; left: 0.75rem;
+      font-size: 2.5rem;
+      line-height: 1;
+      color: var(--spice-amber);
+      opacity: 0.3;
+      font-family: var(--font-display);
+    }
+
+    .comment-text {
+      font-size: 0.9rem;
+      color: var(--text-main);
+      font-style: italic;
+      padding-top: 0.5rem;
+    }
+
+    .comment-author {
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.1em;
+      color: var(--spice-amber);
+      margin-top: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    .add-comment-form {
+      background: rgba(22,15,5,0.6);
+      border: 1px solid var(--border-glow);
+      border-radius: 8px;
+      padding: 1.5rem;
+    }
+
+    .add-comment-form h4 {
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      color: var(--spice-pale);
+      margin-bottom: 1rem;
+      letter-spacing: 0.05em;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+
+    .form-group label {
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .form-input, .form-textarea, .form-select {
+      background: rgba(13,10,5,0.8);
+      border: 1px solid rgba(196,116,42,0.3);
+      border-radius: 4px;
+      padding: 0.6rem 0.9rem;
+      color: var(--text-main);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      width: 100%;
+    }
+
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
+      border-color: var(--spice-amber);
+      box-shadow: 0 0 10px rgba(196,116,42,0.2);
+    }
+
+    .form-textarea { resize: vertical; min-height: 80px; }
+
+    .form-select option { background: var(--sand-dark); }
+
+    /* ===== ======================== ===== */
+    /* ===== SECTION 2: DICIONÁRIO   ===== */
+    /* ===== ======================== ===== */
+    #dicionario { background: rgba(10,8,3,0.3); }
+
+    .dict-search-wrap {
+      position: relative;
+      margin-bottom: 2rem;
+    }
+
+    .dict-search {
+      width: 100%;
+      padding: 0.9rem 1rem 0.9rem 3rem;
+      background: rgba(22,15,5,0.8);
+      border: 1px solid var(--border-glow);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .dict-search:focus {
+      border-color: var(--spice-amber);
+      box-shadow: 0 0 15px rgba(196,116,42,0.2);
+    }
+
+    .dict-search-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      pointer-events: none;
+    }
+
+    .dict-filters {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+
+    .filter-btn {
+      padding: 0.4rem 1rem;
+      border-radius: 50px;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: 1px solid rgba(196,116,42,0.3);
+      background: transparent;
+      color: var(--text-dim);
+      transition: all 0.2s;
+    }
+
+    .filter-btn.active,
+    .filter-btn:hover {
+      background: rgba(196,116,42,0.15);
+      border-color: var(--spice-amber);
+      color: var(--spice-gold);
+    }
+
+    .dict-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    .dict-card {
+      background: rgba(22,15,5,0.75);
+      border: 1px solid rgba(196,116,42,0.2);
+      border-radius: 10px;
+      padding: 1.4rem;
+      transition: all 0.25s;
+      cursor: default;
+    }
+
+    .dict-card:hover {
+      border-color: var(--spice-amber);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4), 0 0 15px var(--glow-amber);
+    }
+
+    .dict-card.hidden { display: none; }
+
+    .dict-term {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      color: var(--spice-gold);
+      margin-bottom: 0.2rem;
+    }
+
+    .dict-phonetic {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.05em;
+    }
+
+    .dict-en {
+      font-size: 0.85rem;
+      color: var(--sky-pale);
+      font-style: italic;
+      margin-bottom: 0.75rem;
+      padding-left: 0.75rem;
+      border-left: 2px solid var(--sky-blue);
+    }
+
+    .dict-pt {
+      font-size: 0.9rem;
+      color: var(--text-main);
+      margin-bottom: 0.75rem;
+    }
+
+    .dict-context {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      font-style: italic;
+      border-top: 1px solid rgba(196,116,42,0.1);
+      padding-top: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    .dict-category {
+      display: inline-block;
+      margin-top: 0.75rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 3px;
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .cat-povo { background: rgba(74,140,63,0.2); color: var(--eco-bright); border: 1px solid rgba(74,140,63,0.4); }
+    .cat-tech { background: rgba(58,107,138,0.2); color: var(--sky-pale); border: 1px solid rgba(58,107,138,0.4); }
+    .cat-eco  { background: rgba(196,116,42,0.15); color: var(--spice-gold); border: 1px solid rgba(196,116,42,0.4); }
+    .cat-rel  { background: rgba(120,50,100,0.2); color: #c87de0; border: 1px solid rgba(120,50,100,0.4); }
+    .cat-geo  { background: rgba(130,80,30,0.2); color: var(--dune-tan); border: 1px solid rgba(130,80,30,0.4); }
+
+    /* ===== =================== ===== */
+    /* ===== SECTION 3: QUIZ    ===== */
+    /* ===== =================== ===== */
+    #quiz {
+      background: linear-gradient(180deg, rgba(10,8,3,0.4) 0%, rgba(15,10,4,0.5) 100%);
+    }
+
+    .quiz-week-tabs {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin-bottom: 2.5rem;
+      background: rgba(13,10,5,0.6);
+      padding: 6px;
+      border-radius: 10px;
+      border: 1px solid rgba(196,116,42,0.15);
+    }
+
+    .week-tab {
+      flex: 1;
+      min-width: 60px;
+      padding: 0.55rem 0.4rem;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.08em;
+      border-radius: 6px;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: var(--text-dim);
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .week-tab:hover { color: var(--spice-gold); background: rgba(196,116,42,0.08); }
+
+    .week-tab.active {
+      background: var(--spice-amber);
+      color: var(--sand-deep);
+      font-weight: 700;
+    }
+
+    .week-tab .tab-lock {
+      display: block;
+      font-size: 0.7rem;
+      margin-top: 1px;
+    }
+
+    .quiz-container { display: none; }
+    .quiz-container.active { display: block; }
+
+    .quiz-header-card {
+      background: linear-gradient(135deg, rgba(30,20,8,0.9), rgba(20,14,5,0.95));
+      border: 1px solid var(--border-glow);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .quiz-meta h3 {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      color: var(--spice-pale);
+      margin-bottom: 0.3rem;
+    }
+
+    .quiz-meta p {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    .quiz-score-display {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .score-value {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--spice-gold);
+      line-height: 1;
+    }
+
+    .score-label {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+
+    /* Timer */
+    .timer-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .timer-display {
+      font-family: var(--font-mono);
+      font-size: 1.4rem;
+      font-weight: 700;
+      min-width: 60px;
+      color: var(--spice-gold);
+      transition: color 0.3s;
+    }
+
+    .timer-display.danger { color: var(--danger-red); animation: blink 0.5s step-end infinite; }
+
+    @keyframes blink { 50% { opacity: 0.4; } }
+
+    .timer-bar-wrap {
+      flex: 1;
+      height: 6px;
+      background: rgba(196,116,42,0.15);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .timer-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--eco-bright), var(--spice-gold));
+      border-radius: 3px;
+      transition: width 1s linear, background 0.3s;
+    }
+
+    .timer-bar.danger { background: linear-gradient(90deg, var(--danger-red), #e84040); }
+
+    /* Question */
+    .question-counter {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    .question-type-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .qt-story  { background: rgba(58,107,138,0.2); color: var(--sky-pale); border: 1px solid rgba(58,107,138,0.4); }
+    .qt-ods    { background: rgba(74,140,63,0.2);  color: var(--eco-bright); border: 1px solid rgba(74,140,63,0.4); }
+    .qt-lingua { background: rgba(120,50,100,0.2); color: #c87de0; border: 1px solid rgba(120,50,100,0.4); }
+    .qt-bonus  { background: rgba(196,116,42,0.2); color: var(--spice-gold); border: 1px solid rgba(196,116,42,0.4); }
+
+    .question-text {
+      font-family: var(--font-body);
+      font-size: 1.2rem;
+      color: var(--white-sand);
+      line-height: 1.6;
+      margin-bottom: 1.75rem;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .option-btn {
+      padding: 1rem 1.2rem;
+      background: rgba(22,15,5,0.7);
+      border: 1px solid rgba(196,116,42,0.25);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s;
+      line-height: 1.4;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .option-letter {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 26px; height: 26px;
+      border-radius: 50%;
+      background: rgba(196,116,42,0.15);
+      border: 1px solid rgba(196,116,42,0.3);
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--spice-amber);
+      transition: all 0.2s;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--spice-amber);
+      background: rgba(196,116,42,0.1);
+      transform: translateX(3px);
+    }
+
+    .option-btn:hover:not(:disabled) .option-letter {
+      background: var(--spice-amber);
+      color: var(--sand-deep);
+    }
+
+    .option-btn.correct {
+      border-color: var(--eco-green);
+      background: rgba(74,140,63,0.15);
+      color: var(--eco-pale);
+    }
+
+    .option-btn.correct .option-letter {
+      background: var(--eco-green);
+      color: #fff;
+      border-color: var(--eco-green);
+    }
+
+    .option-btn.wrong {
+      border-color: var(--danger-red);
+      background: rgba(160,48,32,0.15);
+      color: #e07060;
+    }
+
+    .option-btn.wrong .option-letter {
+      background: var(--danger-red);
+      color: #fff;
+      border-color: var(--danger-red);
+    }
+
+    .option-btn:disabled { cursor: default; transform: none !important; }
+
+    /* Feedback */
+    .feedback-box {
+      display: none;
+      padding: 1.25rem 1.5rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .feedback-box.correct {
+      background: rgba(74,140,63,0.15);
+      border: 1px solid var(--eco-green);
+    }
+
+    .feedback-box.wrong {
+      background: rgba(160,48,32,0.12);
+      border: 1px solid var(--danger-red);
+    }
+
+    .feedback-title {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .feedback-box.correct .feedback-title { color: var(--eco-bright); }
+    .feedback-box.wrong  .feedback-title { color: #e07060; }
+
+    .feedback-text {
+      font-size: 0.9rem;
+      color: var(--text-main);
+      line-height: 1.6;
+    }
+
+    .feedback-ref {
+      margin-top: 0.75rem;
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.05em;
+      color: var(--text-dim);
+    }
+
+    .quiz-next-btn {
+      margin-top: 1.5rem;
+      width: 100%;
+    }
+
+    /* Quiz Results */
+    .quiz-results {
+      display: none;
+      text-align: center;
+      padding: 3rem 2rem;
+      background: rgba(22,15,5,0.8);
+      border: 1px solid var(--border-glow);
+      border-radius: 12px;
+    }
+
+    .results-filtragens {
+      font-family: var(--font-display);
+      font-size: 5rem;
+      font-weight: 900;
+      color: var(--spice-gold);
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+
+    .results-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+    }
+
+    .results-breakdown {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+
+    .results-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .results-stat-value {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    .results-stat-label {
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .results-message {
+      font-size: 1rem;
+      color: var(--text-main);
+      font-style: italic;
+      max-width: 450px;
+      margin: 0 auto 2rem;
+      line-height: 1.7;
+    }
+
+    /* ===== ======================== ===== */
+    /* ===== SECTION 4: NOTAS       ===== */
+    /* ===== ======================== ===== */
+    #notas { background: rgba(8,6,2,0.4); }
+
+    .notes-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    .chapters-sidebar {
+      background: rgba(15,10,4,0.8);
+      border: 1px solid rgba(196,116,42,0.2);
+      border-radius: 10px;
+      overflow: hidden;
+      position: sticky;
+      top: 80px;
+    }
+
+    .sidebar-header {
+      padding: 1rem 1.25rem;
+      background: rgba(30,20,8,0.6);
+      border-bottom: 1px solid rgba(196,116,42,0.15);
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--spice-amber);
+    }
+
+    .chapter-book-title {
+      padding: 0.6rem 1rem 0.3rem;
+      font-family: var(--font-display);
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: rgba(196,116,42,0.05);
+    }
+
+    .chapter-item {
+      padding: 0.65rem 1.25rem;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      cursor: pointer;
+      border-left: 2px solid transparent;
+      transition: all 0.2s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chapter-item:hover { color: var(--spice-gold); background: rgba(196,116,42,0.06); }
+
+    .chapter-item.active {
+      color: var(--spice-gold);
+      border-left-color: var(--spice-amber);
+      background: rgba(196,116,42,0.08);
+    }
+
+    .chapter-note-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--eco-bright);
+      display: none;
+    }
+
+    .chapter-note-dot.has-note { display: block; }
+
+    .notes-editor {
+      background: rgba(15,10,4,0.7);
+      border: 1px solid rgba(196,116,42,0.2);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .notes-editor-header {
+      padding: 1rem 1.5rem;
+      background: rgba(30,20,8,0.6);
+      border-bottom: 1px solid rgba(196,116,42,0.15);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .notes-chapter-name {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      color: var(--spice-pale);
+    }
+
+    .notes-autosave {
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      color: var(--eco-bright);
+      letter-spacing: 0.1em;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    .notes-autosave.visible { opacity: 1; }
+
+    .notes-toolbar {
+      display: flex;
+      gap: 4px;
+      padding: 0.5rem 1rem;
+      background: rgba(13,10,5,0.5);
+      border-bottom: 1px solid rgba(196,116,42,0.1);
+      flex-wrap: wrap;
+    }
+
+    .toolbar-btn {
+      padding: 0.3rem 0.6rem;
+      background: transparent;
+      border: 1px solid rgba(196,116,42,0.2);
+      border-radius: 4px;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .toolbar-btn:hover {
+      background: rgba(196,116,42,0.1);
+      color: var(--spice-gold);
+      border-color: var(--spice-amber);
+    }
+
+    .notes-textarea {
+      width: 100%;
+      min-height: 350px;
+      padding: 1.5rem;
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      font-family: var(--font-body);
+      font-size: 1.05rem;
+      line-height: 1.8;
+      resize: vertical;
+      outline: none;
+    }
+
+    .notes-textarea::placeholder { color: rgba(154,133,96,0.4); font-style: italic; }
+
+    .notes-footer {
+      padding: 0.75rem 1.5rem;
+      border-top: 1px solid rgba(196,116,42,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .notes-stats {
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+    }
+
+    .btn-danger {
+      background: rgba(160,48,32,0.2);
+      color: #e07060;
+      border: 1px solid rgba(160,48,32,0.4);
+      font-size: 0.6rem;
+      padding: 0.4rem 0.9rem;
+    }
+
+    .btn-danger:hover {
+      background: rgba(160,48,32,0.35);
+    }
+
+    .notes-all-section { margin-top: 3rem; }
+
+    .notes-all-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .note-preview-card {
+      background: rgba(18,12,4,0.8);
+      border: 1px solid rgba(196,116,42,0.2);
+      border-radius: 8px;
+      padding: 1.25rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .note-preview-card:hover {
+      border-color: var(--spice-amber);
+      transform: translateY(-2px);
+    }
+
+    .note-preview-chapter {
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      color: var(--spice-gold);
+      margin-bottom: 0.5rem;
+    }
+
+    .note-preview-text {
+      font-size: 0.85rem;
+      color: var(--text-main);
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      line-height: 1.5;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid rgba(196,116,42,0.15);
+      padding: 3rem 1.5rem;
+      text-align: center;
+    }
+
+    .footer-inner { max-width: 700px; margin: 0 auto; }
+
+    .footer-logo {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--spice-gold);
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-text {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-ods {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1.25rem;
+      background: rgba(74,140,63,0.12);
+      border: 1px solid rgba(74,140,63,0.35);
+      border-radius: 50px;
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      color: var(--eco-bright);
+      letter-spacing: 0.1em;
+    }
+
+    .footer-copy {
+      margin-top: 2rem;
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      color: rgba(154,133,96,0.4);
+      letter-spacing: 0.1em;
+    }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      bottom: 1.5rem; right: 1.5rem;
+      padding: 0.75rem 1.25rem;
+      background: rgba(30,20,8,0.95);
+      border: 1px solid var(--spice-amber);
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--spice-gold);
+      letter-spacing: 0.1em;
+      z-index: 9999;
+      transform: translateY(20px);
+      opacity: 0;
+      transition: all 0.3s;
+      pointer-events: none;
+    }
+
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    /* ===== SCROLL ANIMATIONS ===== */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      .hero-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .comments-grid { grid-template-columns: 1fr; }
+      .notes-layout { grid-template-columns: 1fr; }
+      .chapters-sidebar { position: static; }
+      .options-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      section { padding: 90px 1rem 60px; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .weeks-track { grid-template-columns: repeat(4,1fr); gap: 8px; }
+      .form-row { grid-template-columns: 1fr; }
+      .quiz-header-card { flex-direction: column; align-items: flex-start; }
+      .hero-cta { flex-direction: column; }
+      .hero-cta .btn { text-align: center; justify-content: center; }
+      .dict-grid { grid-template-columns: 1fr; }
+      .week-tab { padding: 0.5rem 0.3rem; font-size: 0.5rem; }
+      .results-breakdown { gap: 1rem; }
+      .section-title { font-size: clamp(1.75rem, 7vw, 2.5rem); }
+    }
+
+    /* ===== SAND DUNE DECORATION ===== */
+    .dune-illustration {
+      width: 100%;
+      pointer-events: none;
+      opacity: 0.15;
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Particle Canvas -->
+<canvas id="particles-canvas"></canvas>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Navigation -->
+<nav id="main-nav">
+  <div class="nav-inner">
+    <a href="#home" class="nav-logo" onclick="showSection('home')">
+      ✦ A Ecológica de Duna
+      <span>Clube de Leitura · Letras UNIP</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#home" onclick="showSection('home')" data-section="home">Home</a></li>
+      <li><a href="#dicionario" onclick="showSection('dicionario')" data-section="dicionario">Dicionário</a></li>
+      <li><a href="#quiz" onclick="showSection('quiz')" data-section="quiz">Quiz</a></li>
+      <li><a href="#notas" onclick="showSection('notas')" data-section="notas">Notas</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#home" onclick="showSection('home');toggleMobileMenu()">🏠 Home</a>
+  <a href="#dicionario" onclick="showSection('dicionario');toggleMobileMenu()">📖 Dicionário Bilíngue</a>
+  <a href="#quiz" onclick="showSection('quiz');toggleMobileMenu()">⚡ Quiz Semanal</a>
+  <a href="#notas" onclick="showSection('notas');toggleMobileMenu()">✍️ Bloco de Notas</a>
+</div>
+
+<!-- ===================================== -->
+<!-- SECTION 1: HOME                      -->
+<!-- ===================================== -->
+<section id="home">
+  <div class="section-inner">
+    <!-- Hero -->
+    <div class="hero-grid">
+      <div class="fade-up">
+        <div class="hero-badges">
+          <span class="badge badge-eco">🌱 ODS 13 · Clima</span>
+          <span class="badge badge-spice">✦ Letras · UNIP</span>
+        </div>
+        <h1 class="hero-title">
+          A Ecológica<br>
+          de <span class="highlight">Duna</span>
+        </h1>
+        <p class="hero-subtitle">
+          "A areia é um espelho do tempo. Cuide do tempo e a areia cuidará de si mesma."
+        </p>
+        <p class="hero-description">
+          Bem-vindo ao Clube de Leitura onde a ficção científica encontra a urgência ambiental.
+          Exploramos <em>Duna</em> de Frank Herbert — um universo de escassez hídrica, colapso
+          ecológico e resistência cultural — para refletir sobre as metas do
+          <strong>ODS 13: Ação Contra a Mudança Global do Clima</strong>.
+          Doze participantes. Oito semanas. Uma consciência planetária.
+        </p>
+        <div class="hero-cta">
+          <button class="btn btn-primary" onclick="showSection('quiz')">⚡ Fazer o Quiz</button>
+          <button class="btn btn-outline" onclick="showSection('dicionario')">📖 Ver Glossário</button>
+        </div>
+      </div>
+
+      <div class="fade-up" style="animation-delay:0.2s">
+        <div class="student-card">
+          <div class="student-card-title">// Identificação do Projeto</div>
+          <div class="student-info-row">
+            <span class="student-info-label">Aluno</span>
+            <span class="student-info-value">Rafael Oliveira Rufini</span>
+          </div>
+          <div class="student-info-row">
+            <span class="student-info-label">RGM</span>
+            <span class="student-info-value">37329901</span>
+          </div>
+          <div class="student-info-row">
+            <span class="student-info-label">Curso</span>
+            <span class="student-info-value">Letras — Português e Inglês</span>
+          </div>
+          <div class="student-info-row">
+            <span class="student-info-label">Polo</span>
+            <span class="student-info-value">Guarulhos – Jd. São João</span>
+          </div>
+          <div class="student-info-row">
+            <span class="student-info-label">Período</span>
+            <span class="student-info-value">03/04 → 22/05/2026</span>
+          </div>
+          <div class="student-info-row">
+            <span class="student-info-label">Participantes</span>
+            <span class="student-info-value">12 leitores</span>
+          </div>
+          <div class="student-info-row">
+            <span class="student-info-label">Objetivo</span>
+            <span class="student-info-value">Duna × ODS 13 — Ação Climática</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress Timeline -->
+    <div class="progress-section fade-up">
+      <div class="progress-header">
+        <h3 class="progress-title">✦ Jornada do Clube — 8 Semanas</h3>
+        <span class="progress-status" id="progress-status">● Carregando…</span>
+      </div>
+
+      <div class="weeks-track" id="weeks-track"></div>
+
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progress-bar-fill" style="width:0%"></div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;margin-top:0.5rem;">
+        <span style="font-family:var(--font-mono);font-size:0.55rem;color:var(--text-dim);">03 Abr 2026</span>
+        <span style="font-family:var(--font-mono);font-size:0.55rem;color:var(--text-dim);">22 Mai 2026</span>
+      </div>
+    </div>
+
+    <!-- Comments Wall -->
+    <div class="comments-section fade-up">
+      <div class="section-eyebrow">Mural da Turma</div>
+      <h2 class="section-title" style="font-size:1.8rem;">Insights &amp; Percepções</h2>
+      <p class="section-subtitle">Reflexões dos participantes após os debates semanais</p>
+
+      <div class="comments-grid" id="comments-grid"></div>
+
+      <div class="add-comment-form">
+        <h4>✍ Compartilhe sua percepção</h4>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Seu nome / apelido</label>
+            <input type="text" class="form-input" id="comment-name" placeholder="Ex: Leitora Shai-Hulud" maxlength="40">
+          </div>
+          <div class="form-group">
+            <label>Semana de referência</label>
+            <select class="form-select" id="comment-week">
+              <option value="Semana 1">Semana 1 – Chegada em Arrakis</option>
+              <option value="Semana 2">Semana 2 – A Traição</option>
+              <option value="Semana 3">Semana 3 – O Deserto</option>
+              <option value="Semana 4">Semana 4 – Vida Fremen</option>
+              <option value="Semana 5">Semana 5 – Muad'Dib</option>
+              <option value="Semana 6">Semana 6 – A Jihad</option>
+              <option value="Semana 7">Semana 7 – O Conflito Final</option>
+              <option value="Semana 8">Semana 8 – Debate Final</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:1rem;">
+          <label>Sua percepção / insight</label>
+          <textarea class="form-textarea" id="comment-text" placeholder="O que te marcou nessa leitura? Que paralelos você encontrou com o ODS 13?"></textarea>
+        </div>
+        <button class="btn btn-primary" onclick="submitComment()">Publicar no Mural ✦</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================== -->
+<!-- SECTION 2: DICIONÁRIO                -->
+<!-- ===================================== -->
+<section id="dicionario" style="display:none;">
+  <div class="section-inner">
+    <div class="section-eyebrow">Glossário Bilíngue EN · PT</div>
+    <h2 class="section-title">Dicionário de Arrakis</h2>
+    <p class="section-subtitle">Neologismos e termos especializados de Frank Herbert — com contexto ecológico e literário</p>
+
+    <div class="dict-search-wrap">
+      <svg class="dict-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" class="dict-search" id="dict-search" placeholder="Buscar termo… (ex: Sietch, Spice, Fremen)" oninput="filterDict()">
+    </div>
+
+    <div class="dict-filters">
+      <button class="filter-btn active" onclick="filterDictCat('all',this)">Todos</button>
+      <button class="filter-btn" onclick="filterDictCat('povo',this)">Povos &amp; Culturas</button>
+      <button class="filter-btn" onclick="filterDictCat('eco',this)">Ecologia &amp; Clima</button>
+      <button class="filter-btn" onclick="filterDictCat('tech',this)">Tecnologia</button>
+      <button class="filter-btn" onclick="filterDictCat('rel',this)">Religião &amp; Filosofia</button>
+      <button class="filter-btn" onclick="filterDictCat('geo',this)">Geografia</button>
+    </div>
+
+    <div class="dict-grid" id="dict-grid"></div>
+  </div>
+</section>
+
+<!-- ===================================== -->
+<!-- SECTION 3: QUIZ                      -->
+<!-- ===================================== -->
+<section id="quiz" style="display:none;">
+  <div class="section-inner">
+    <div class="section-eyebrow">Sistema de Filtragens</div>
+    <h2 class="section-title">Quiz Semanal</h2>
+    <p class="section-subtitle">5 perguntas por semana · Compreensão literária + ODS 13 + Desafio linguístico</p>
+
+    <div class="quiz-week-tabs" id="quiz-week-tabs"></div>
+
+    <div id="quiz-panels"></div>
+  </div>
+</section>
+
+<!-- ===================================== -->
+<!-- SECTION 4: NOTAS                     -->
+<!-- ===================================== -->
+<section id="notas" style="display:none;">
+  <div class="section-inner">
+    <div class="section-eyebrow">Arquivo Pessoal</div>
+    <h2 class="section-title">Bloco de Notas</h2>
+    <p class="section-subtitle">Suas reflexões e citações favoritas, salvas localmente no seu dispositivo</p>
+
+    <div style="background:rgba(74,140,63,0.08);border:1px solid rgba(74,140,63,0.3);border-radius:8px;padding:0.9rem 1.25rem;margin-bottom:2rem;display:flex;align-items:center;gap:0.75rem;">
+      <span style="font-size:1.2rem;">🔒</span>
+      <span style="font-size:0.88rem;color:var(--eco-pale);">Suas notas são salvas <strong>apenas no seu dispositivo</strong> via localStorage — sem conta, sem servidor, total privacidade.</span>
+    </div>
+
+    <div class="notes-layout">
+      <!-- Sidebar -->
+      <div class="chapters-sidebar" id="chapters-sidebar"></div>
+
+      <!-- Editor -->
+      <div class="notes-editor">
+        <div class="notes-editor-header">
+          <span class="notes-chapter-name" id="notes-chapter-name">Selecione um capítulo</span>
+          <span class="notes-autosave" id="notes-autosave">✓ Salvo</span>
+        </div>
+        <div class="notes-toolbar">
+          <button class="toolbar-btn" onclick="insertSnippet('📌 ')" title="Marcador">📌</button>
+          <button class="toolbar-btn" onclick="insertSnippet('💡 ')" title="Insight">💡</button>
+          <button class="toolbar-btn" onclick="insertSnippet('❓ ')" title="Dúvida">❓</button>
+          <button class="toolbar-btn" onclick="insertSnippet('🌿 ODS 13: ')" title="ODS 13">🌿 ODS</button>
+          <button class="toolbar-btn" onclick="insertSnippet('📖 p. ')" title="Página">📖 Pág.</button>
+          <button class="toolbar-btn" onclick="insertSnippet('🔤 EN→PT: ')" title="Vocabulário">🔤 Vocab.</button>
+          <button class="toolbar-btn" onclick="insertSnippet('\n--- \n')" title="Separador">─ ─ ─</button>
+        </div>
+        <textarea
+          class="notes-textarea"
+          id="notes-textarea"
+          placeholder="Escreva suas reflexões, citações favoritas, dúvidas de vocabulário ou paralelos com o ODS 13…
+
+Use os atalhos acima para organizar:
+📌 Marcadores importantes
+💡 Insights e reflexões  
+❓ Dúvidas para o debate
+🌿 ODS 13: conexões com a crise climática
+📖 Pág. X — referência de página
+🔤 EN→PT: tradução de termos"
+          oninput="scheduleNoteSave()"
+          disabled
+        ></textarea>
+        <div class="notes-footer">
+          <span class="notes-stats" id="notes-stats">Selecione um capítulo para começar</span>
+          <button class="btn btn-danger btn-outline" onclick="clearCurrentNote()" id="btn-clear-note" style="display:none;">🗑 Limpar nota</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- All Notes Preview -->
+    <div class="notes-all-section">
+      <h3 style="font-family:var(--font-display);color:var(--spice-pale);margin-bottom:0.5rem;">Todas as suas Notas</h3>
+      <p style="color:var(--text-dim);font-size:0.9rem;margin-bottom:1.5rem;font-style:italic;">Clique em uma nota para editá-la</p>
+      <div class="notes-all-grid" id="notes-all-grid"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">✦ A Ecológica de Duna</div>
+    <p class="footer-text">
+      Um projeto de extensão universitária que une a literatura especulativa de Frank Herbert
+      ao debate urgente sobre a crise climática global. Desenvolvido para o curso de Letras — Português e Inglês, UNIP Guarulhos.
+    </p>
+    <div class="footer-ods">
+      🌍 ODS 13 — Ação Contra a Mudança Global do Clima · Agenda 2030
+    </div>
+    <div class="footer-copy">Rafael Oliveira Rufini · RGM 37329901 · Letras UNIP · 2026</div>
+  </div>
+</footer>
+
+<!-- ===================================== -->
+<!-- JAVASCRIPT                           -->
+<!-- ===================================== -->
+<script>
+/* ==========================================
+   DATA
+   ========================================== */
+
+const WEEKS = [
+  { label: "S1", full: "Semana 1", date: "03–09/04", theme: "Chegada em Arrakis", chapters: "Cap. 1–5" },
+  { label: "S2", full: "Semana 2", date: "10–16/04", theme: "A Traição", chapters: "Cap. 6–10" },
+  { label: "S3", full: "Semana 3", date: "17–23/04", theme: "O Deserto", chapters: "Cap. 11–15" },
+  { label: "S4", full: "Semana 4", date: "24–30/04", theme: "Vida Fremen", chapters: "Cap. 16–20" },
+  { label: "S5", full: "Semana 5", date: "01–07/05", theme: "Muad'Dib Desperta", chapters: "Cap. 21–25" },
+  { label: "S6", full: "Semana 6", date: "08–14/05", theme: "A Jihad", chapters: "Cap. 26–30" },
+  { label: "S7", full: "Semana 7", date: "15–21/05", theme: "O Conflito Final", chapters: "Cap. 31–35" },
+  { label: "S8", full: "Semana 8", date: "22/05",    theme: "Debate Final", chapters: "Epílogo" },
+];
+
+const DICT_TERMS = [
+  { term:"Sietch", phonetic:"/siːtʃ/", en:"A hidden community or cave sanctuary of the Fremen people", pt:"Comunidade secreta dos Fremen, geralmente em cavernas — espaço de proteção e sobrevivência coletiva", context:"Paralelo com a resistência de populações vulneráveis à crise climática; espaços de refugio ecológico.", cat:"geo" },
+  { term:"Spice / Melange", phonetic:"/spais/ /meˈlɑ̃ʒ/", en:"The most precious substance in the universe; found only on Arrakis", pt:"A especiaria — substância mais valiosa do universo, produzida apenas em Arrakis. Prolonga a vida e expande a consciência", context:"Metáfora dos combustíveis fósseis: recurso único, controlado por poucos, gerador de conflitos geopolíticos e danos ecológicos irreversíveis. Conexão direta com o ODS 13.", cat:"eco" },
+  { term:"Destilador", phonetic:"/ˌdɛstɪˈlɑːdɔː/", en:"Stillsuit — a full-body garment that recycles the body's moisture", pt:"Traje corporal que recicla suor, urina e exalações, retornando água purificada ao usuário", context:"Representa o máximo de eficiência hídrica — tecnologia que comunidades em regiões áridas precisariam no contexto das mudanças climáticas.", cat:"tech" },
+  { term:"Fremen", phonetic:"/ˈfreɪmɛn/", en:"The indigenous people of Arrakis, masters of desert survival", pt:"Povo nativo de Arrakis — resilientes, adaptados ao deserto e guardiões da ecologia local", context:"Representação dos povos indígenas e comunidades tradicionais como guardiões do meio ambiente — perspectiva central no ODS 13.", cat:"povo" },
+  { term:"Muad'Dib", phonetic:"/muˈɑːdɪb/", en:"The kangaroo mouse of Arrakis; also Paul Atreides' Fremen name", pt:"O rato-canguru de Arrakis — criatura que se adaptou ao extremo — também é o nome Fremen de Paul Atreides", context:"Símbolo de adaptação ao ambiente hostil; o nome implica aprender com o ecossistema em vez de dominá-lo.", cat:"rel" },
+  { term:"Bene Gesserit", phonetic:"/ˌbɛni ˈdʒɛsərɪt/", en:"A secretive sisterhood with advanced mental and physical abilities", pt:"Ordem religiosa feminina com capacidades físicas e mentais extraordinárias, que manipula políticas por gerações", context:"Representa o controle de informação e narrativa — paralelo ao lobbying climático e ao negacionismo científico.", cat:"rel" },
+  { term:"Sardaukar", phonetic:"/ˈsɑːrdɔːkɑːr/", en:"Elite imperial soldiers, shaped by the harsh conditions of their prison planet", pt:"Soldados de elite do Império, formados pelo planeta-prisão Salusa Secundus — ambiente hostil que os tornou invencíveis", context:"Demonstra como adversidade extrema forja resiliência — mas também violência quando não há justiça social.", cat:"povo" },
+  { term:"Shai-Hulud", phonetic:"/ˌʃaɪ huːˈluːd/", en:"The great sandworm; sacred to the Fremen as a manifestation of divine power", pt:"O grande verme da areia — criatura sagrada para os Fremen, manifestação divina e criador da especiaria", context:"Símbolo máximo da natureza como força indomável; o respeito ou desrespeito por Shai-Hulud define o destino de Arrakis — como o clima define o destino da Terra.", cat:"rel" },
+  { term:"Gom Jabbar", phonetic:"/ɡɒm dʒəˈbɑːr/", en:"A needle-like weapon used in a Bene Gesserit test of humanity", pt:"Agulha envenenada usada num teste Bene Gesserit para distinguir humanos de animais — quem sucumbe ao instinto morre", context:"Metáfora da escolha entre agir com razão (sustentabilidade) ou instinto (consumismo predatório).", cat:"rel" },
+  { term:"Jihad Butleriana", phonetic:"/dʒɪˈhɑːd bʌtˈlɪərɪənə/", en:"A historical rebellion against thinking machines, now a religious law", pt:"Revolta histórica contra máquinas pensantes — resultou na proibição de computadores; os humanos desenvolveram mentes superiores", context:"Levanta questões sobre dependência tecnológica e o papel humano no equilíbrio ecológico.", cat:"rel" },
+  { term:"Terraformação", phonetic:"/ˌtɛrəfɔːˈmeɪʃən/", en:"Ecological engineering to transform a planet's environment", pt:"Processo de transformar o ecossistema de Arrakis para suportar plantas e água — o grande projeto secreto dos Fremen", context:"Paralelo direto à geoengenharia climática e ao debate sobre intervenção humana nos ecossistemas terrestres. ODS 13, meta 13.3.", cat:"eco" },
+  { term:"Arrakis", phonetic:"/əˈrækɪs/", en:"The desert planet, also known as Dune — the only source of spice", pt:"O planeta deserto — também chamado Duna — único lugar onde a especiaria existe. Mundo de escassez extrema de água", context:"Arrakis é uma metonímia da Terra em colapso climático: planeta árido, recursos concentrados em poucos, populações vulneráveis.", cat:"geo" },
+  { term:"Kwisatz Haderach", phonetic:"/ˈkwɪsæts ˈhɑːdəræx/", en:"The Bene Gesserit term for their prophesied superbeing", pt:"'O atalho' — o ser supremo que as Bene Gesserit cultivaram por gerações; capaz de ver o passado e o futuro", context:"Representa a necessidade de uma visão de longo prazo — exatamente o que falta nas políticas climáticas atuais.", cat:"rel" },
+  { term:"Crysknife", phonetic:"/ˈkrɪsnaɪf/", en:"A sacred Fremen blade made from a sandworm's tooth", pt:"Faca sagrada Fremen feita do dente de um verme da areia — símbolo de identidade cultural e pertencimento", context:"A relação íntima dos Fremen com Shai-Hulud reflete como culturas indígenas extraem recursos de forma reverente.", cat:"tech" },
+  { term:"Weirding Way", phonetic:"/ˈwɪərɪŋ weɪ/", en:"The Bene Gesserit martial art and way of being", pt:"Arte marcial e filosofia de vida Bene Gesserit — combinação de controle corporal, percepção e adaptação", context:"Filosofia de integração com o ambiente — ouvir o planeta em vez de dominá-lo.", cat:"tech" },
+  { term:"Thumper", phonetic:"/ˈθʌmpər/", en:"A device used to attract sandworms by rhythmic vibration", pt:"Dispositivo que emite vibrações rítmicas para atrair vermes da areia — usado pelos Fremen para transporte", context:"Demonstra como os Fremen usam a ecologia local a seu favor — conhecimento profundo do ecossistema como ferramenta de sobrevivência.", cat:"tech" },
+  { term:"Lisan al-Gaib", phonetic:"/ˈliːsæn æl ˈɡeɪb/", en:"'The Voice from the Outer World' — the Fremen messianic prophecy", pt:"'A Voz do Além-Mundo' — profecia messiânica Fremen, possivelmente implantada pelas Bene Gesserit", context:"Critica a construção de narrativas salvadoras — questionando quem se beneficia das histórias de 'salvação do planeta'.", cat:"rel" },
+  { term:"Amtal Rule", phonetic:"/ˈæmtæl ruːl/", en:"Testing to destruction — Fremen method to understand a thing's true limits", pt:"Regra Fremen de testar até a destruição para entender os limites reais de algo ou alguém", context:"Metáfora da abordagem industrial com o planeta: testar os limites da Terra até o colapso irreversível.", cat:"povo" },
+];
+
+const QUIZ_DATA = [
+  // SEMANA 1
+  { week:1, questions:[
+    { type:"story", q:"No início de Duna, a família Atreides é enviada a Arrakis. Quem é o principal responsável por essa manobra política?", opts:["O Imperador Shaddam IV","O Barão Vladimir Harkonnen","A Reverenda Mãe Gaius Helen Mohiam","O Duque Leto Atreides"], ans:1, feedback:"O Barão Harkonnen, com cumplicidade do Imperador, armou uma armadilha para destruir a Casa Atreides. A 'oferta' de administrar Arrakis era uma armadilha política.", ref:"📖 Capítulo 3 · 'O Conselho Imperial'" },
+    { type:"ods", q:"A escassez hídrica extrema de Arrakis espelha uma realidade climática. De acordo com o ODS 13, qual ação é prioritária para populações vulneráveis à seca?", opts:["Construir represas gigantes","Fortalecer resiliência e capacidade adaptativa","Exportar água de outros planetas","Privatizar recursos hídricos"], ans:1, feedback:"O ODS 13, meta 13.1, foca em 'reforçar a resiliência e a capacidade de adaptação a riscos climáticos' — exatamente o que os Fremen fazem com os destiladores.", ref:"🌍 ODS 13, Meta 13.1 — Adaptação Climática" },
+    { type:"story", q:"Como Paul Atreides demonstra ter passado no teste do Gom Jabbar da Reverenda Mãe?", opts:["Ele mata a Reverenda Mãe","Ele retira a mão da caixa de dor antes do tempo","Ele suporta a dor sem mover a mão","Ele usa poderes mentais para bloquear a dor"], ans:2, feedback:"Paul resiste à dor excruciante sem mover a mão, provando ser capaz de sobrepor razão e vontade ao instinto de fuga — o verdadeiro teste da humanidade segundo as Bene Gesserit.", ref:"📖 Capítulo 1 · 'O Teste da Bene Gesserit'" },
+    { type:"lingua", q:"Frank Herbert criou 'Stillsuit' (Destilador). Em português, qual estratégia linguística melhor captura o significado técnico e simbólico do termo?", opts:["'Roupa de Sobrevivência'","'Destilador' — foca na função central de destilação hídrica","'Terno do Deserto'","'Armadura de Areia'"], ans:1, feedback:"'Destilador' é uma tradução funcional que captura a essência tecnológica (destilar = purificar água do corpo) — exemplo de tradução orientada pela função, não pela forma.", ref:"🔤 Lexicologia · Tradução Funcional" },
+    { type:"ods", q:"[BÔNUS DIFÍCIL] O Acordo de Paris, vinculado ao ODS 13, estabelece como meta central limitar o aquecimento global a:", opts:["3°C acima dos níveis pré-industriais","1,5–2°C acima dos níveis pré-industriais","0,5°C acima dos níveis pré-industriais","Qualquer temperatura, desde que gradual"], ans:1, feedback:"O Acordo de Paris (2015) estabelece como meta manter o aquecimento 'bem abaixo de 2°C' e buscar limitar a 1,5°C. Cada fração de grau representa impactos enormes para povos vulneráveis.", ref:"🌍 Acordo de Paris · Art. 2 · ODS 13" },
+  ]},
+  // SEMANA 2
+  { week:2, questions:[
+    { type:"story", q:"Qual elemento representa a maior ameaça imediata para Paul e sua mãe Lady Jessica após a traição?", opts:["Os vermes da areia","O sol escaldante de Arrakis","Os soldados Sardaukar disfarçados de Harkonnen","A falta de especiaria"], ans:2, feedback:"Os Sardaukar — soldados de elite do Imperador — disfarçados com uniformes Harkonnen executaram os membros da Casa Atreides. Sua presença revelou que o Imperador era cúmplice da traição.", ref:"📖 Capítulo 8 · 'A Noite da Traição'" },
+    { type:"ods", q:"O Barão Harkonnen controla Arrakis pela especiaria. Isso espelha qual problema climático real?", opts:["Desertificação espontânea","Concentração do controle de recursos naturais em corporações e poucos países","Falta de tecnologia renovável","Aumento do nível do mar"], ans:1, feedback:"A monopolização da especiaria reflete o controle de combustíveis fósseis por poucas nações e corporações — uma estrutura que o ODS 13 e o Acordo Climático buscam desmantelar pela justiça climática.", ref:"🌍 ODS 13 · Justiça Climática · IPCC" },
+    { type:"story", q:"Lady Jessica tomou uma decisão crucial que vai além do treinamento Bene Gesserit. Qual foi?", opts:["Tornar-se Reverenda Mãe dos Fremen","Ensinar os poderes da Voz ao filho Paul","Entregar Paul ao Barão","Abandonar Arrakis sozinha"], ans:0, feedback:"Lady Jessica aceita se tornar a nova Reverenda Mãe dos Fremen, integrando-se profundamente na cultura nativa — um ato de ruptura com a hierarquia Bene Gesserit e de aliança com os oprimidos.", ref:"📖 Capítulo 9 · 'A Escolha de Jessica'" },
+    { type:"lingua", q:"Em inglês, 'Spice' tem múltiplos sentidos (tempero, interesse, perigo). Em português, 'Especiaria' preserva essa polissemia?", opts:["Sim, plenamente — especiaria também é múltipla","Parcialmente — perde a conotação de perigo e vício","Não — deveria ser 'Droga' para precisão","Sim, mas somente no contexto culinário"], ans:1, feedback:"'Especiaria' preserva o sentido de substância valiosa e exótica, mas perde as conotações de narcótico e perigo que 'Spice' carrega em inglês coloquial. Um bom estudo de caso de perdas tradutórias.", ref:"🔤 Tradutologia · Perdas de Polissemia" },
+    { type:"ods", q:"[BÔNUS] A traição que destrói os Atreides envolve traição interna (Dr. Yueh). Qual fenômeno climático análogo é chamado de 'traição interna' pelos ativistas?", opts:["Chuva ácida","Greenwashing — empresas que fingem sustentabilidade","Efeito estufa","Desmatamento legal"], ans:1, feedback:"O greenwashing (lavagem verde) é visto como traição interna ao movimento climático: empresas e governos que fingem compromisso com a sustentabilidade enquanto continuam poluindo.", ref:"🌍 ODS 13 · Meta 13.b · Greenwashing" },
+  ]},
+  // SEMANA 3
+  { week:3, questions:[
+    { type:"story", q:"Como os Fremen se locomovem sobre os vermes da areia?", opts:["Usando aguilhões elétricos","Inserindo ganchos nos anéis do verme e mantendo o orifício anterior aberto","Montando pela boca com cordas especiais","Escalando pelos espinhos da cauda"], ans:1, feedback:"Os Fremen inserem ganchos entre os anéis e mantêm o orifício que o verme usa para aspirar areia forçado a ficar aberto — o verme gira para proteger a abertura, e o Fremen fica no topo.", ref:"📖 Capítulo 12 · 'A Arte de Dominar Shai-Hulud'" },
+    { type:"ods", q:"Os Fremen coletam cada gota d'água — incluindo de corpos de mortos. Qual meta do ODS 6 (água) se relaciona com o ODS 13 nesse contexto?", opts:["Meta 6.1 — acesso a água potável segura","Meta 6.4 — uso eficiente de água e escassez","Meta 6.2 — saneamento e higiene","Meta 6.3 — qualidade da água"], ans:1, feedback:"A meta 6.4 trata de 'uso eficiente de água em todos os setores' e 'enfrentar a escassez de água'. Os destiladores Fremen são o exemplo de ficção científica mais radical dessa meta.", ref:"🌍 ODS 6, Meta 6.4 · Eficiência Hídrica" },
+    { type:"story", q:"O que é o 'Liber Al' dos Fremen — o Kitab al-Ibar?", opts:["Um mapa secreto dos sietches","Um livro sagrado de sabedoria écológica e sobrevivência no deserto","A lista de membros do conselho Fremen","As leis do comércio de especiaria"], ans:1, feedback:"O Kitab al-Ibar é uma espécie de guia de sobrevivência e sabedoria acumulada dos Fremen — conhecimento ecológico passado entre gerações, misturando ciência prática e crença religiosa.", ref:"📖 Capítulo 14 · 'A Sabedoria do Deserto'" },
+    { type:"lingua", q:"'Fremen' não tem etimologia clara em inglês moderno. Herbert provavelmente derivou de qual combinação?", opts:["'Free Men' (homens livres) + influência árabe","'French Men' (influência francesa)","'Freak Men' (homens estranhos)","'Frame Men' (construtores)"], ans:0, feedback:"'Fremen' = 'Free Men' (homens livres) + sonoridade árabe/beduína. Herbert mergulhou na cultura árabe-islâmica e nos povos do deserto para construir a língua e cultura Fremen.", ref:"🔤 Etimologia Literária · Influências de Herbert" },
+    { type:"ods", q:"[BÔNUS] A UNFCCC (Convenção-Quadro sobre Mudanças Climáticas da ONU) tem sede em:", opts:["Genebra, Suíça","Bonn, Alemanha","Nova York, EUA","Paris, França"], ans:1, feedback:"A UNFCCC tem sede em Bonn, Alemanha. É o órgão internacional central para implementar o ODS 13 e o Acordo de Paris.", ref:"🌍 UNFCCC · Bonn, Alemanha · ODS 13" },
+  ]},
+  // SEMANA 4
+  { week:4, questions:[
+    { type:"story", q:"Qual é o projeto secreto de longo prazo que os Fremen cultivam há séculos em Arrakis?", opts:["Criar um exército para derrubar o Imperador","Terraformar Arrakis para torná-la um planeta verde e úmido","Monopolizar a produção de especiaria","Construir naves espaciais para escapar de Arrakis"], ans:1, feedback:"Os Fremen, guiados pelo ecólogo planetário Pardot Kynes e seu filho Liet, trabalham secretamente há séculos para terraformar Arrakis — criar reservatórios, plantar vegetação e eventualmente transformar o planeta.", ref:"📖 Capítulo 17 · 'O Sonho Verde de Kynes'" },
+    { type:"ods", q:"A terraformação de Arrakis envolveria destruir o habitat natural dos vermes da areia (e consequentemente a especiaria). Isso levanta qual dilema do ODS 15 (vida terrestre)?", opts:["Expansão agrícola vs. biodiversidade nativa","Controle de pragas vs. ecossistema","Urbanização vs. áreas verdes","Mineração vs. solo fértil"], ans:0, feedback:"O dilema Fremen espelha perfeitamente o ODS 15: 'proteger, recuperar e promover o uso sustentável dos ecossistemas terrestres'. Transformar o deserto significa destruir espécies únicas — o mesmo conflito que ocorre com desmantamento e agricultura.", ref:"🌍 ODS 15 · Ecossistemas Terrestres · Biodiversidade" },
+    { type:"story", q:"Como Paul Atreides ganha o nome 'Muad'Dib' entre os Fremen?", opts:["O nome é dado pela Reverenda Mãe em ritual","Ele escolhe o nome do rato-canguru que observou se adaptar ao deserto","Os Fremen o chamam assim por sua agilidade","Paul herda o nome de um herói Fremen antigo"], ans:1, feedback:"Paul escolhe 'Muad'Dib' — o rato-canguru nativo de Arrakis — porque admira sua adaptação perfeita ao ambiente hostil. O nome carrega ensinamento ecológico: aprender com a natureza.", ref:"📖 Capítulo 19 · 'A Escolha do Nome'" },
+    { type:"lingua", q:"Em português, 'adaptar' vem do latim 'adaptare'. Qual nuance distingue 'adaptar' de 'adotar' no contexto de culturas em crise climática?", opts:["São sinônimos perfeitos","'Adaptar' implica transformação ativa do existente; 'adotar' implica incorporar algo externo","'Adotar' é mais intenso que 'adaptar'","'Adaptar' é usado apenas para idiomas"], ans:1, feedback:"Importante distinção: 'adaptar' (transformar para novo contexto) vs. 'adotar' (incorporar algo de fora). Povos indígenas 'adaptam' práticas milenares ao clima atual — não 'adotam' soluções externas.", ref:"🔤 Lexicologia · Semântica do Contexto" },
+    { type:"ods", q:"[BÔNUS] Qual país tem as maiores reservas de água doce do mundo e, portanto, responsabilidade especial na agenda do ODS 13?", opts:["Estados Unidos","China","Brasil","Rússia"], ans:2, feedback:"O Brasil detém cerca de 12–13% da água doce superficial do planeta — a maior reserva do mundo. Isso confere ao Brasil responsabilidade e poder singulares na agenda climática e hídrica global.", ref:"🌍 ODS 13 · IBGE · Recursos Hídricos Brasileiros" },
+  ]},
+  // SEMANA 5
+  { week:5, questions:[
+    { type:"story", q:"O que Paul Atreides vê quando começa a ter visões proféticas em Arrakis?", opts:["O fim de Arrakis por inundação","Múltiplos futuros possíveis, incluindo uma jihad galáctica em seu nome","O retorno dos Atreides ao poder","A morte do Barão Harkonnen"], ans:1, feedback:"Paul vê 'caminhos' — futuros possíveis — e o que mais o aterroriza não é a morte, mas a jihad: uma guerra santa galática travada em seu nome, com bilhões de mortes. Sua profecia é um fardo.", ref:"📖 Capítulo 22 · 'As Visões de Muad'Dib'" },
+    { type:"ods", q:"As visões de Paul mostram um futuro de guerra por recursos. Qual relatório da ONU conecta diretamente conflitos armados ao ODS 13 e escassez climática?", opts:["Relatório da OMC sobre comércio","Relatório do PNUMA sobre Paz, Conflito e Clima","Relatório do FMI sobre crise econômica","Relatório da UNESCO sobre cultura"], ans:1, feedback:"O PNUMA (Programa das Nações Unidas para o Meio Ambiente) publicou estudos conectando escassez de recursos naturais (água, terra) ao aumento de conflitos — o que o ODS 13 busca prevenir.", ref:"🌍 PNUMA · Conflitos Climáticos · ODS 13" },
+    { type:"story", q:"Qual substância Paul e os Fremen consomem que potencializa as capacidades mentais de Paul?", opts:["Água da vida (Amrita)","A especiaria Melange","O veneno do verme jovem","Uma mistura herbal Fremen"], ans:0, feedback:"A 'Água da Vida' é o líquido tóxico extraído do pulmão de um verme jovem afogado — é letal para a maioria, mas Lady Jessica o transforma. Paul toma a versão não-transformada e sobrevive graças ao poder de sua mente.", ref:"📖 Capítulo 24 · 'A Prova de Muad'Dib'" },
+    { type:"lingua", q:"Herbert usa 'the voice' (a Voz) como técnica persuasiva das Bene Gesserit. Em português, qual gênero textual usa mais esse recurso de modulação vocal para convencer?", opts:["Romance literário","Discurso político e retórica","Poesia concreta","Reportagem jornalística"], ans:1, feedback:"O discurso político usa intensamente técnicas de modulação vocal, entonação e cadência para persuadir — semelhante à 'Voz' Bene Gesserit. Herbert faz uma crítica velada à retórica política.", ref:"🔤 Retórica · Géneros Textuais · Persuasão" },
+    { type:"ods", q:"[BÔNUS] Quem são os 'povos MAPA' no contexto das mudanças climáticas?", opts:["Países com maior produção de energia","Países Mais Afetados e com Menos Poder de Adaptação","Países com maior PIB ambiental","Países com maior área florestal"], ans:1, feedback:"MAPA = Mais Afetados e com Menos Poder de Adaptação — termo usado pelo movimento climático para descrever países do Sul Global que sofrem mais os impactos climáticos mas contribuíram menos para o problema.", ref:"🌍 ODS 13 · Justiça Climática · Equidade Norte-Sul" },
+  ]},
+  // SEMANA 6
+  { week:6, questions:[
+    { type:"story", q:"Como a visão ecológica de Liet-Kynes influencia sua lealdade entre os Atreides e os Harkonnen?", opts:["Ele apoia os Harkonnen por serem mais poderosos","Sua lealdade é sempre a Arrakis e seu ecossistema, acima de qualquer casa","Ele trai os Fremen por riqueza","Ele é neutro e não toma partido"], ans:1, feedback:"Liet-Kynes é leal acima de tudo à terra — Arrakis. Sua frase final ('o deserto vive') revela que via o planeta como organismo vivo prioritário a qualquer estrutura política.", ref:"📖 Capítulo 27 · 'A Morte de Kynes'" },
+    { type:"ods", q:"A morte de Kynes — um cientista ecólogo — no deserto simboliza qual problema real na implementação do ODS 13?", opts:["Falta de tecnologia","Perseguição e eliminação de defensores ambientais","Excesso de burocracia","Falta de informação climática"], ans:1, feedback:"Defensores ambientais são um dos grupos mais perseguidos do mundo. Segundo a Global Witness, centenas são assassinados anualmente por protegerem ecossistemas. O ODS 13 não avança sem proteger esses guardiões.", ref:"🌍 ODS 13 · Global Witness · Defensores Ambientais" },
+    { type:"story", q:"Na jihad que Paul prevê, qual é o dilema moral central que o atormenta?", opts:["Matar o Barão Harkonnen","Tornar-se um deus que ele não quer ser, mas não consegue evitar","Abandonar os Fremen após a vitória","Escolher entre Jessica e Chani"], ans:1, feedback:"Paul vê que ao tentar evitar a jihad, acaba desencadeando-a. O poder profético não elimina o sofrimento — apenas o torna visível. É uma crítica ao messianismo: líderes carismáticos frequentemente tornam-se o oposto do que pregam.", ref:"📖 Capítulo 29 · 'O Peso da Profecia'" },
+    { type:"lingua", q:"'Jihad' em árabe significa 'esforço' ou 'luta' (não necessariamente guerra). Como a tradução/interpretação cultural de termos religiosos afeta a recepção de Duna no Brasil?", opts:["Não afeta, pois é ficção científica","Cria filtragem cultural: o leitor brasileiro carrega preconceitos midiáticos sobre o termo","Facilita a compreensão por ser amplamente conhecido","Torna o livro mais difícil de vender"], ans:1, feedback:"Este é um exemplo clássico de 'tradução cultural' — o leitor brasileiro de 2026 carrega conotações negativas sobre 'jihad' pela mídia, enquanto Herbert usou o termo em seu sentido amplo de luta coletiva.", ref:"🔤 Tradução Cultural · Estudos de Recepção Literária" },
+    { type:"ods", q:"[BÔNUS] O IPCC (Painel Intergovernamental sobre Mudanças Climáticas) lançou seu 6º Relatório de Avaliação em qual ano?", opts:["2018","2021–2023","2019","2025"], ans:1, feedback:"O 6º Ciclo de Avaliação do IPCC foi publicado entre 2021 e 2023. O Relatório de Síntese final foi em março de 2023 e é a principal base científica para o ODS 13.", ref:"🌍 IPCC AR6 · 2021-2023 · ODS 13" },
+  ]},
+  // SEMANA 7
+  { week:7, questions:[
+    { type:"story", q:"Como Paul finalmente derrota o Imperador e o Barão Harkonnen?", opts:["Em combate direto com exércitos convencionais","Ameaçando destruir toda a especiaria de Arrakis — paralisando a galáxia","Com um ataque nuclear às forças imperiais","Revelando que é filho ilegítimo do Imperador"], ans:1, feedback:"Paul ameaça destruir a especiaria com bombas atômicas — sem ela, a galáxia inteira para. É chantagem ecológica: quem controla um recurso vital controla tudo. Paralelo direto ao poder dos países com petróleo ou água doce.", ref:"📖 Capítulo 33 · 'O Ultimato da Areia'" },
+    { type:"ods", q:"A ameaça de destruir a especiaria paralisa o poder galático. Qual mecanismo real é análogo — e foi usado em negociações do ODS 13?", opts:["Ameaças de sanções comerciais","Países ricos condicionando ajuda ao corte de emissões","'Green conditionality' — condicionantes ambientais em acordos econômicos","Embargo de tecnologia limpa"], ans:2, feedback:"'Green conditionality' é quando acordos comerciais ou empréstimos são condicionados a metas climáticas. É uma alavanca poderosa — e controversa — de diplomacia climática.", ref:"🌍 ODS 13 · Diplomacia Climática · Green Conditionality" },
+    { type:"story", q:"Qual é o custo pessoal mais pesado que Paul paga por sua vitória ao final do livro?", opts:["A perda de Arrakis para os Harkonnen","A morte de seu filho e a cegueira (visão no futuro)","A traição de Chani","O exílio da família Atreides"], ans:1, feedback:"No combate ritual final, Paul recebe veneno de areia que o cega fisicamente — mas abre sua 'visão interior' completamente. Ele também prevê a morte de seu filho Leto II. Vitória política a custo trágico pessoal.", ref:"📖 Capítulo 35 · 'A Visão do Cego'" },
+    { type:"lingua", q:"Duna é considerada o romance de ficção científica mais vendido de todos os tempos. Qual característica linguística a distingue de outras obras do gênero?", opts:["Uso de linguagem simples e acessível","Glossário próprio, mistura de línguas reais (árabe, português, etc.) e neologismos sistemáticos","Ausência de diálogos","Foco exclusivo na tecnologia"], ans:1, feedback:"Herbert criou um sistema linguístico coerente que mistura árabe, hebraico, português e neologismos — um trabalho de worldbuilding lexical sem precedentes em sci-fi. Isso torna a obra um objeto de estudo para Letras.", ref:"🔤 Worldbuilding Linguístico · Frank Herbert · Lexicografia Literária" },
+    { type:"ods", q:"[BÔNUS FINAL] O ODS 13 tem 5 metas. Qual delas especificamente trata de 'integrar medidas de mudança climática nas políticas nacionais'?", opts:["Meta 13.1","Meta 13.2","Meta 13.3","Meta 13.b"], ans:1, feedback:"Meta 13.2: 'Integrar medidas da mudança do clima nas políticas, estratégias e planejamentos nacionais'. Esta é a meta que conecta Duna à realidade: transformar consciência literária em política pública.", ref:"🌍 ODS 13, Meta 13.2 · Agenda 2030 da ONU" },
+  ]},
+  // SEMANA 8
+  { week:8, questions:[
+    { type:"story", q:"Qual tema central conecta Duna ao debate ecológico contemporâneo?", opts:["A superioridade da tecnologia sobre a natureza","A interdependência entre recursos naturais, poder político e sobrevivência cultural","A inevitabilidade da guerra pelo espaço","A inferioridade de culturas tradicionais"], ans:1, feedback:"Duna é, fundamentalmente, sobre como quem controla recursos naturais controla o destino dos povos. É uma parábola do petróleo, da água e do clima — mais atual hoje do que em 1965.", ref:"📖 Duna completo · Tema Central" },
+    { type:"ods", q:"Após 8 semanas lendo Duna pelo olhar do ODS 13, qual é a grande lição ética da obra para a crise climática?", opts:["Que a tecnologia sempre resolverá os problemas ambientais","Que culturas tradicionais e conhecimento ecológico local são insubstituíveis na adaptação climática","Que guerras por recursos são inevitáveis","Que apenas líderes carismáticos podem salvar o planeta"], ans:1, feedback:"Duna celebra o saber Fremen — um povo que sobreviveu porque conhecia e respeitava seu ecossistema profundamente. O ODS 13 reforça isso: soluções climáticas precisam incluir saberes tradicionais e comunidades locais.", ref:"🌍 ODS 13 · IPCC AR6 · Saberes Tradicionais · Meta 13.3" },
+    { type:"story", q:"Paul Atreides é herói ou vilão ao final de Duna? Qual interpretação tem mais respaldo textual?", opts:["Herói inquestionável — libertou os oprimidos","Vilão — deliberadamente manipulou uma profecia para tomar o poder","Ambíguo — venceu mas desencadeou uma jihad que ele mesmo temia","Vilão — abandonou os valores do Duque Leto"], ans:2, feedback:"A resposta 'correta' é a ambiguidade. Herbert afirmou explicitamente que Duna é uma crítica ao messianismo — Paul é simultânea vítima, herói e catalisador do mal que temia. Essa ambiguidade é a riqueza literária da obra.", ref:"📖 Epílogo · Entrevistas de Frank Herbert sobre messianismo" },
+    { type:"lingua", q:"Em seu projeto de clube de leitura, qual habilidade linguística foi mais trabalhada ao integrar Duna com o ODS 13?", opts:["Leitura decodificadora","Letramento crítico — ler textos em seu contexto histórico-social e ambiental","Gramática normativa","Fonologia comparada"], ans:1, feedback:"O 'letramento crítico' (critical literacy) é a capacidade de ler textos compreendendo suas dimensões políticas, históricas e sociais. Conectar Duna ao ODS 13 é prática de letramento crítico aplicado.", ref:"🔤 Letramento Crítico · Paulo Freire · Estudos de Letras" },
+    { type:"ods", q:"[QUIZ FINAL] Se você pudesse enviar uma mensagem aos 12 participantes deste clube de leitura, qual seria a mais alinhada ao espírito de Duna + ODS 13?", opts:["'O futuro do planeta depende de tecnologias que ainda não existem'","'Conhecer, respeitar e agir: os Fremen salvaram Arrakis com disciplina coletiva — nós podemos salvar a Terra'","'Indivíduos não fazem diferença — apenas governos podem agir'","'A crise climática é inevitável — devemos nos preparar para o pior'"], ans:1, feedback:"Parabéns por completar as 8 semanas! Duna ensina que ação coletiva disciplinada, baseada em conhecimento profundo do ecossistema, é possível. Os Fremen levaram séculos — mas tinham um plano. O ODS 13 é o nosso plano.", ref:"🌍 ODS 13 · Mensagem Final · Clube de Leitura Ecológico" },
+  ]},
+];
+
+const CHAPTERS = [
+  { book:"Livro I — Duna", chapters:[
+    "Prólogo: O Universo de Duna","Cap. 1 — A Herança Atreides","Cap. 2 — O Teste da Reverenda Mãe","Cap. 3 — Arrakis, Planeta Deserto","Cap. 4 — O Destilador","Cap. 5 — O Sietch Tabr","Cap. 6 — O Ecólogo Planetário","Cap. 7 — A Armadilha Harkonnen","Cap. 8 — A Noite da Traição","Cap. 9 — Fuga para o Deserto","Cap. 10 — Os Fremen",
+  ]},
+  { book:"Livro II — Muad'Dib", chapters:[
+    "Cap. 11 — A Sobrevivência","Cap. 12 — Shai-Hulud","Cap. 13 — O Sietch dos Fremen","Cap. 14 — A Água da Vida","Cap. 15 — A Visão do Futuro","Cap. 16 — O Plano Verde de Kynes","Cap. 17 — O Combate Ritual","Cap. 18 — Paul Muad'Dib","Cap. 19 — As Profecias",
+  ]},
+  { book:"Livro III — O Profeta", chapters:[
+    "Cap. 20 — O Retorno","Cap. 21 — A Jihad","Cap. 22 — O Imperador","Cap. 23 — O Duelo Final","Cap. 24 — A Areia Canta","Cap. 25 — O Novo Arrakis","Epílogo: O Futuro de Duna",
+  ]},
+];
+
+const SAMPLE_COMMENTS = [
+  { name:"Fernanda S.", week:"Semana 1", text:"Percebi que a chegada dos Atreides em Arrakis é idêntica à chegada de colonizadores em territórios indígenas — com boas intenções, mas sem entender a ecologia local." },
+  { name:"Carlos M.", week:"Semana 3", text:"Os destiladores me lembraram dos projetos de reaproveitamento de água de chuva no semiárido brasileiro. A ficção científica de Herbert chegou décadas na frente!" },
+  { name:"Priya L.", week:"Semana 4", text:"O projeto de terraformação dos Fremen é exatamente o debate sobre geoengenharia climática — intervir no ecossistema para salvar o ecossistema. Dilema profundo." },
+  { name:"João V.", week:"Semana 5", text:"A especiaria como metáfora do petróleo é tão óbvia que parece simples, mas a profundidade está nos detalhes: como toda a galáxia se organiza em torno desse recurso, igual ao mundo com o petróleo." },
+];
+
+/* ==========================================
+   STATE
+   ========================================== */
+let currentSection = 'home';
+let currentDictCat = 'all';
+let currentQuizWeek = 1;
+let currentChapter = null;
+let quizState = {};
+let noteSaveTimer = null;
+
+/* ==========================================
+   PARTICLES
+   ========================================== */
+(function initParticles() {
+  const canvas = document.getElementById('particles-canvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  let animId;
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  function createParticles() {
+    particles = [];
+    const count = Math.floor(window.innerWidth / 12);
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 1.5 + 0.3,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.15 + 0.08,
+        alpha: Math.random() * 0.6 + 0.2,
+      });
+    }
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.y > canvas.height) { p.y = -4; p.x = Math.random() * canvas.width; }
+      if (p.x < 0) p.x = canvas.width;
+      if (p.x > canvas.width) p.x = 0;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(196,116,42,${p.alpha})`;
+      ctx.fill();
+    });
+    animId = requestAnimationFrame(animate);
+  }
+
+  resize();
+  createParticles();
+  animate();
+  window.addEventListener('resize', () => { resize(); createParticles(); });
+})();
+
+/* ==========================================
+   NAVIGATION
+   ========================================== */
+function showSection(name) {
+  document.querySelectorAll('section').forEach(s => s.style.display = 'none');
+  document.getElementById(name).style.display = 'block';
+  currentSection = name;
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.classList.toggle('active', a.dataset.section === name);
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleMobileMenu() {
+  document.getElementById('hamburger').classList.toggle('open');
+  document.getElementById('mobile-menu').classList.toggle('open');
+}
+
+/* ==========================================
+   HOME — PROGRESS
+   ========================================== */
+function initProgress() {
+  const start = new Date('2026-04-03');
+  const end   = new Date('2026-05-22');
+  const now   = new Date();
+
+  const track = document.getElementById('weeks-track');
+  const bar   = document.getElementById('progress-bar-fill');
+  const status = document.getElementById('progress-status');
+
+  let currentWeek = 0;
+  let progressPct = 0;
+
+  if (now < start) {
+    currentWeek = 0;
+    progressPct = 0;
+    status.textContent = '● Aguardando início (03/04/2026)';
+  } else if (now > end) {
+    currentWeek = 9;
+    progressPct = 100;
+    status.textContent = '✓ Clube Concluído com Sucesso!';
+    status.style.color = 'var(--spice-gold)';
+  } else {
+    const elapsed = (now - start) / (1000 * 60 * 60 * 24 * 7);
+    currentWeek = Math.floor(elapsed) + 1;
+    progressPct = Math.min(100, (elapsed / 7) * 100);
+    status.textContent = `● Semana ${currentWeek} de 8 em andamento`;
+  }
+
+  WEEKS.forEach((w, i) => {
+    const wNum = i + 1;
+    const div = document.createElement('div');
+    div.className = 'week-node';
+    const state = wNum < currentWeek ? 'past' : wNum === currentWeek ? 'current' : 'future';
+    div.innerHTML = `
+      <div class="week-dot ${state}" title="${w.full} (${w.date})\n${w.theme}">
+        ${state === 'past' ? '✓' : w.label}
+      </div>
+      <div class="week-label">${w.date}</div>
+    `;
+    track.appendChild(div);
+  });
+
+  setTimeout(() => { bar.style.width = progressPct + '%'; }, 300);
+}
+
+/* ==========================================
+   COMMENTS
+   ========================================== */
+function loadComments() {
+  const stored = JSON.parse(localStorage.getItem('duna_comments') || '[]');
+  const all = [...SAMPLE_COMMENTS, ...stored];
+  renderComments(all);
+}
+
+function renderComments(list) {
+  const grid = document.getElementById('comments-grid');
+  grid.innerHTML = '';
+  list.slice(-8).forEach(c => {
+    const card = document.createElement('div');
+    card.className = 'comment-card';
+    card.innerHTML = `
+      <p class="comment-text">${escHtml(c.text)}</p>
+      <div class="comment-author">${escHtml(c.name)} · ${escHtml(c.week)}</div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function submitComment() {
+  const name = document.getElementById('comment-name').value.trim();
+  const week = document.getElementById('comment-week').value;
+  const text = document.getElementById('comment-text').value.trim();
+  if (!name || !text) { showToast('Preencha seu nome e percepção!'); return; }
+  const stored = JSON.parse(localStorage.getItem('duna_comments') || '[]');
+  stored.push({ name, week, text });
+  localStorage.setItem('duna_comments', JSON.stringify(stored));
+  document.getElementById('comment-name').value = '';
+  document.getElementById('comment-text').value = '';
+  loadComments();
+  showToast('✓ Percepção publicada no mural!');
+}
+
+/* ==========================================
+   DICTIONARY
+   ========================================== */
+function initDict() {
+  renderDict(DICT_TERMS);
+}
+
+function renderDict(terms) {
+  const grid = document.getElementById('dict-grid');
+  grid.innerHTML = '';
+  terms.forEach(t => {
+    const card = document.createElement('div');
+    card.className = 'dict-card';
+    card.dataset.cat = t.cat;
+    card.innerHTML = `
+      <div class="dict-term">${escHtml(t.term)}</div>
+      <div class="dict-phonetic">${escHtml(t.phonetic)}</div>
+      <div class="dict-en">${escHtml(t.en)}</div>
+      <div class="dict-pt">${escHtml(t.pt)}</div>
+      <div class="dict-context">${escHtml(t.context)}</div>
+      <span class="dict-category cat-${t.cat}">${catLabel(t.cat)}</span>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function catLabel(c) {
+  return { povo:'Povos & Culturas', tech:'Tecnologia', eco:'Ecologia & Clima', rel:'Religião & Filosofia', geo:'Geografia' }[c] || c;
+}
+
+function filterDict() {
+  const q = document.getElementById('dict-search').value.toLowerCase();
+  const cards = document.querySelectorAll('.dict-card');
+  cards.forEach(card => {
+    const text = card.textContent.toLowerCase();
+    const catOk = currentDictCat === 'all' || card.dataset.cat === currentDictCat;
+    card.classList.toggle('hidden', !(text.includes(q) && catOk));
+  });
+}
+
+function filterDictCat(cat, btn) {
+  currentDictCat = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterDict();
+}
+
+/* ==========================================
+   QUIZ
+   ========================================== */
+function initQuiz() {
+  const tabsEl = document.getElementById('quiz-week-tabs');
+  const panelsEl = document.getElementById('quiz-panels');
+
+  WEEKS.forEach((w, i) => {
+    const wNum = i + 1;
+    const btn = document.createElement('button');
+    btn.className = 'week-tab' + (wNum === 1 ? ' active' : '');
+    btn.dataset.week = wNum;
+    btn.innerHTML = `${w.label}<span class="tab-lock">${wNum <= 8 ? '📖' : '🔒'}</span>`;
+    btn.onclick = () => switchQuizWeek(wNum);
+    tabsEl.appendChild(btn);
+  });
+
+  QUIZ_DATA.forEach(wd => {
+    const panel = document.createElement('div');
+    panel.className = 'quiz-container' + (wd.week === 1 ? ' active' : '');
+    panel.id = `quiz-panel-${wd.week}`;
+    panel.innerHTML = buildQuizPanel(wd);
+    panelsEl.appendChild(panel);
+  });
+
+  // Init all quiz states
+  QUIZ_DATA.forEach(wd => {
+    const saved = JSON.parse(localStorage.getItem(`duna_quiz_w${wd.week}`) || 'null');
+    quizState[wd.week] = saved || { current: 0, score: 0, answers: [], done: false, startTime: null };
+  });
+
+  QUIZ_DATA.forEach(wd => refreshQuizPanel(wd.week));
+}
+
+function buildQuizPanel(wd) {
+  return `
+    <div class="quiz-header-card">
+      <div class="quiz-meta">
+        <h3>${WEEKS[wd.week-1].full} — ${WEEKS[wd.week-1].theme}</h3>
+        <p>${WEEKS[wd.week-1].chapters} · ${WEEKS[wd.week-1].date}</p>
+      </div>
+      <div class="quiz-score-display">
+        <div class="score-value" id="score-val-${wd.week}">0</div>
+        <div class="score-label">Filtragens</div>
+      </div>
+    </div>
+    <div id="quiz-body-${wd.week}"></div>
+  `;
+}
+
+function refreshQuizPanel(week) {
+  const wd = QUIZ_DATA.find(x => x.week === week);
+  const state = quizState[week];
+  const body = document.getElementById(`quiz-body-${week}`);
+  const scoreEl = document.getElementById(`score-val-${week}`);
+  if (!body) return;
+
+  scoreEl.textContent = state.score;
+
+  if (state.done) {
+    body.innerHTML = buildResults(week);
+    return;
+  }
+
+  const qi = state.current;
+  if (qi >= wd.questions.length) {
+    state.done = true;
+    saveQuizState(week);
+    body.innerHTML = buildResults(week);
+    return;
+  }
+
+  const q = wd.questions[qi];
+  const typeMap = { story:'📚 Compreensão', ods:'🌿 ODS 13', lingua:'🔤 Língua', bonus:'⭐ Bônus' };
+  const typeClass = { story:'qt-story', ods:'qt-ods', lingua:'qt-lingua', bonus:'qt-bonus' };
+
+  body.innerHTML = `
+    <div class="timer-row">
+      <div class="timer-display" id="timer-${week}">30</div>
+      <div class="timer-bar-wrap"><div class="timer-bar" id="timer-bar-${week}" style="width:100%"></div></div>
+    </div>
+    <div class="question-counter">Pergunta ${qi+1} de ${wd.questions.length}</div>
+    <span class="question-type-badge ${typeClass[q.type]||'qt-story'}">${typeMap[q.type]||'📚 Questão'}</span>
+    <div class="question-text">${escHtml(q.q)}</div>
+    <div class="options-grid" id="opts-${week}">
+      ${['A','B','C','D'].map((l,i) => `
+        <button class="option-btn" onclick="selectAnswer(${week},${i})" id="opt-${week}-${i}">
+          <span class="option-letter">${l}</span>
+          <span>${escHtml(q.opts[i])}</span>
+        </button>
+      `).join('')}
+    </div>
+    <div class="feedback-box" id="feedback-${week}">
+      <div class="feedback-title" id="feedback-title-${week}"></div>
+      <div class="feedback-text" id="feedback-text-${week}"></div>
+      <div class="feedback-ref" id="feedback-ref-${week}"></div>
+    </div>
+    <button class="btn btn-primary quiz-next-btn" id="next-btn-${week}" style="display:none;" onclick="nextQuestion(${week})">
+      ${qi < wd.questions.length - 1 ? 'Próxima pergunta →' : 'Ver resultado final ✦'}
+    </button>
+  `;
+
+  startTimer(week, q);
+}
+
+let timers = {};
+
+function startTimer(week, q) {
+  clearInterval(timers[week]);
+  let t = 30;
+  quizState[week].startTime = Date.now();
+  const timerEl = document.getElementById(`timer-${week}`);
+  const barEl = document.getElementById(`timer-bar-${week}`);
+
+  timers[week] = setInterval(() => {
+    t--;
+    if (!timerEl) { clearInterval(timers[week]); return; }
+    timerEl.textContent = t;
+    barEl.style.width = (t / 30 * 100) + '%';
+    if (t <= 8) {
+      timerEl.classList.add('danger');
+      barEl.classList.add('danger');
+    }
+    if (t <= 0) {
+      clearInterval(timers[week]);
+      timeOut(week);
+    }
+  }, 1000);
+}
+
+function timeOut(week) {
+  const wd = QUIZ_DATA.find(x => x.week === week);
+  const qi = quizState[week].current;
+  const q = wd.questions[qi];
+
+  document.querySelectorAll(`#opts-${week} .option-btn`).forEach((b,i) => {
+    b.disabled = true;
+    if (i === q.ans) b.classList.add('correct');
+  });
+
+  const fb = document.getElementById(`feedback-${week}`);
+  fb.className = 'feedback-box wrong';
+  fb.style.display = 'block';
+  document.getElementById(`feedback-title-${week}`).textContent = '⏰ Tempo esgotado!';
+  document.getElementById(`feedback-text-${week}`).textContent = q.feedback;
+  document.getElementById(`feedback-ref-${week}`).textContent = q.ref;
+
+  document.getElementById(`next-btn-${week}`).style.display = 'flex';
+}
+
+function selectAnswer(week, idx) {
+  clearInterval(timers[week]);
+  const wd = QUIZ_DATA.find(x => x.week === week);
+  const qi = quizState[week].current;
+  const q = wd.questions[qi];
+  const elapsed = (Date.now() - quizState[week].startTime) / 1000;
+  const isCorrect = idx === q.ans;
+
+  document.querySelectorAll(`#opts-${week} .option-btn`).forEach((b,i) => {
+    b.disabled = true;
+    if (i === q.ans) b.classList.add('correct');
+    if (i === idx && !isCorrect) b.classList.add('wrong');
+  });
+
+  if (isCorrect) {
+    let pts = 10;
+    if (elapsed < 8) pts = 20;
+    else if (elapsed < 15) pts = 15;
+    quizState[week].score += pts;
+    document.getElementById(`score-val-${week}`).textContent = quizState[week].score;
+  }
+
+  quizState[week].answers.push({ qi, chosen: idx, correct: isCorrect });
+
+  const fb = document.getElementById(`feedback-${week}`);
+  fb.className = 'feedback-box ' + (isCorrect ? 'correct' : 'wrong');
+  fb.style.display = 'block';
+
+  document.getElementById(`feedback-title-${week}`).textContent =
+    isCorrect ? (elapsed < 10 ? '⚡ Rápido e certeiro! +' + (elapsed < 8 ? 20 : 15) + ' Filtragens' : '✓ Correto! +10 Filtragens') : '✗ Não desta vez…';
+  document.getElementById(`feedback-text-${week}`).textContent = q.feedback;
+  document.getElementById(`feedback-ref-${week}`).textContent = q.ref;
+
+  document.getElementById(`next-btn-${week}`).style.display = 'flex';
+  saveQuizState(week);
+}
+
+function nextQuestion(week) {
+  quizState[week].current++;
+  saveQuizState(week);
+  refreshQuizPanel(week);
+}
+
+function buildResults(week) {
+  const state = quizState[week];
+  const total = state.answers.length;
+  const correct = state.answers.filter(a => a.correct).length;
+  const pct = total > 0 ? Math.round(correct/total*100) : 0;
+
+  const msgs = [
+    [0,39,"Arrakis ainda tem muito a ensinar. Continue explorando o deserto da sabedoria!"],
+    [40,59,"Você começa a sentir a especiaria. As respostas virão com mais leituras…"],
+    [60,79,"Bom trabalho, jovem Fremen! Seu destilador está funcionando bem."],
+    [80,99,"Muad'Dib estaria orgulhoso. Seu conhecimento ecológico é impressionante!"],
+    [100,100,"Shai-Hulud te abençoa! Pontuação perfeita — você é o Kwisatz Haderach da ecologia literária!"],
+  ];
+  const msg = msgs.find(([min,max]) => pct >= min && pct <= max)?.[2] || "";
+
+  return `
+    <div class="quiz-results" style="display:block;">
+      <div class="results-filtragens">${state.score}</div>
+      <div class="results-label">Filtragens Coletadas</div>
+      <div class="results-breakdown">
+        <div class="results-stat">
+          <span class="results-stat-value" style="color:var(--eco-bright)">${correct}</span>
+          <span class="results-stat-label">Corretas</span>
+        </div>
+        <div class="results-stat">
+          <span class="results-stat-value" style="color:var(--danger-red)">${total-correct}</span>
+          <span class="results-stat-label">Incorretas</span>
+        </div>
+        <div class="results-stat">
+          <span class="results-stat-value" style="color:var(--spice-gold)">${pct}%</span>
+          <span class="results-stat-label">Acertos</span>
+        </div>
+      </div>
+      <p class="results-message">"${msg}"</p>
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-outline" onclick="resetQuiz(${week})">↺ Refazer quiz</button>
+        <button class="btn btn-primary" onclick="showSection('notas')">✍ Anotar reflexões</button>
+      </div>
+    </div>
+  `;
+}
+
+function resetQuiz(week) {
+  quizState[week] = { current: 0, score: 0, answers: [], done: false, startTime: null };
+  saveQuizState(week);
+  refreshQuizPanel(week);
+}
+
+function switchQuizWeek(week) {
+  document.querySelectorAll('.quiz-container').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.week-tab').forEach(b => b.classList.toggle('active', parseInt(b.dataset.week) === week));
+  const panel = document.getElementById(`quiz-panel-${week}`);
+  if (panel) panel.classList.add('active');
+  currentQuizWeek = week;
+  clearInterval(timers[currentQuizWeek]);
+  if (quizState[week] && !quizState[week].done && quizState[week].current < QUIZ_DATA.find(x=>x.week===week).questions.length) {
+    const qi = quizState[week].current;
+    const q = QUIZ_DATA.find(x=>x.week===week).questions[qi];
+    startTimer(week, q);
+  }
+}
+
+function saveQuizState(week) {
+  localStorage.setItem(`duna_quiz_w${week}`, JSON.stringify(quizState[week]));
+}
+
+/* ==========================================
+   NOTES
+   ========================================== */
+function initNotes() {
+  const sidebar = document.getElementById('chapters-sidebar');
+  sidebar.innerHTML = '<div class="sidebar-header">// Capítulos de Duna</div>';
+
+  CHAPTERS.forEach(book => {
+    const bookDiv = document.createElement('div');
+    bookDiv.className = 'chapter-book-title';
+    bookDiv.textContent = book.book;
+    sidebar.appendChild(bookDiv);
+
+    book.chapters.forEach(ch => {
+      const item = document.createElement('div');
+      item.className = 'chapter-item';
+      item.dataset.chapter = ch;
+      const dot = document.createElement('span');
+      dot.className = 'chapter-note-dot';
+      dot.id = 'dot-' + btoa(unescape(encodeURIComponent(ch))).replace(/=/g,'');
+
+      const hasNote = localStorage.getItem('duna_note_' + ch);
+      if (hasNote) dot.classList.add('has-note');
+
+      item.textContent = ch;
+      item.appendChild(dot);
+      item.onclick = () => selectChapter(ch);
+      sidebar.appendChild(item);
+    });
+  });
+
+  renderAllNotes();
+}
+
+function selectChapter(ch) {
+  currentChapter = ch;
+  document.querySelectorAll('.chapter-item').forEach(i => {
+    i.classList.toggle('active', i.dataset.chapter === ch);
+  });
+  document.getElementById('notes-chapter-name').textContent = ch;
+  const ta = document.getElementById('notes-textarea');
+  ta.disabled = false;
+  ta.value = localStorage.getItem('duna_note_' + ch) || '';
+  updateNoteStats();
+  document.getElementById('btn-clear-note').style.display = 'inline-flex';
+}
+
+function scheduleNoteSave() {
+  clearTimeout(noteSaveTimer);
+  noteSaveTimer = setTimeout(saveNote, 800);
+}
+
+function saveNote() {
+  if (!currentChapter) return;
+  const val = document.getElementById('notes-textarea').value;
+  localStorage.setItem('duna_note_' + currentChapter, val);
+  updateNoteDot(currentChapter, val.trim().length > 0);
+  updateNoteStats();
+  renderAllNotes();
+  const autosave = document.getElementById('notes-autosave');
+  autosave.classList.add('visible');
+  setTimeout(() => autosave.classList.remove('visible'), 2000);
+}
+
+function updateNoteDot(ch, hasNote) {
+  const key = btoa(unescape(encodeURIComponent(ch))).replace(/=/g,'');
+  const dot = document.getElementById('dot-' + key);
+  if (dot) dot.classList.toggle('has-note', hasNote);
+}
+
+function updateNoteStats() {
+  const val = document.getElementById('notes-textarea').value;
+  const words = val.trim() ? val.trim().split(/\s+/).length : 0;
+  document.getElementById('notes-stats').textContent = `${words} palavras · ${val.length} caracteres`;
+}
+
+function clearCurrentNote() {
+  if (!currentChapter) return;
+  if (!confirm('Apagar a nota deste capítulo? Esta ação não pode ser desfeita.')) return;
+  localStorage.removeItem('duna_note_' + currentChapter);
+  document.getElementById('notes-textarea').value = '';
+  updateNoteDot(currentChapter, false);
+  updateNoteStats();
+  renderAllNotes();
+  showToast('🗑 Nota apagada.');
+}
+
+function insertSnippet(text) {
+  if (!currentChapter) { showToast('Selecione um capítulo primeiro!'); return; }
+  const ta = document.getElementById('notes-textarea');
+  const start = ta.selectionStart;
+  const end = ta.selectionEnd;
+  ta.value = ta.value.slice(0,start) + text + ta.value.slice(end);
+  ta.selectionStart = ta.selectionEnd = start + text.length;
+  ta.focus();
+  scheduleNoteSave();
+}
+
+function renderAllNotes() {
+  const grid = document.getElementById('notes-all-grid');
+  grid.innerHTML = '';
+  let found = false;
+
+  CHAPTERS.forEach(book => {
+    book.chapters.forEach(ch => {
+      const note = localStorage.getItem('duna_note_' + ch);
+      if (note && note.trim()) {
+        found = true;
+        const card = document.createElement('div');
+        card.className = 'note-preview-card';
+        card.onclick = () => { selectChapter(ch); window.scrollTo({top:0,behavior:'smooth'}); };
+        card.innerHTML = `
+          <div class="note-preview-chapter">${escHtml(ch)}</div>
+          <div class="note-preview-text">${escHtml(note.trim())}</div>
+        `;
+        grid.appendChild(card);
+      }
+    });
+  });
+
+  if (!found) {
+    grid.innerHTML = '<p style="color:var(--text-dim);font-style:italic;font-size:0.9rem;">Nenhuma nota ainda. Comece selecionando um capítulo na barra lateral!</p>';
+  }
+}
+
+/* ==========================================
+   UTILITIES
+   ========================================== */
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+/* ==========================================
+   FADE OBSERVER
+   ========================================== */
+function initObserver() {
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+}
+
+/* ==========================================
+   BOOT
+   ========================================== */
+document.addEventListener('DOMContentLoaded', () => {
+  initProgress();
+  loadComments();
+  initDict();
+  initQuiz();
+  initNotes();
+  initObserver();
+  showSection('home');
+});
+</script>
+</body>
+</html>
